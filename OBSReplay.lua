@@ -1,11 +1,6 @@
---[[
-OBSReplay.lua - Github.com/Kyagara/obsreplay
+-- OBSRePlay.lua - github.com/Kyagara/obsreplay
 
-This OBS studio script moves recordings, replays and screenshots to a folder named after the current scene.
-
-Based on OBSPlay by Kwozy.
-]]
-
+-- Also increments the Memory Leak counter at the end of the OBS log.
 local output_path = obslua.obs_frontend_get_current_record_output_path()
 local output_path_prop_key = "output_path"
 
@@ -17,7 +12,7 @@ local SCREENSHOT_EVENT = 2
 
 function script_description()
 	return [[
-	<h2>OBS Replay</h2>
+	<h2>OBS RePlay</h2>
 	<p>
 	Moves recordings, replays and screenshots to a folder named after the current scene.
 	</p>
@@ -65,6 +60,8 @@ end
 function save(event)
 	local latest_file_path = ""
 
+	-- According to the docs, these functions require freeing but I can't find a free() function that accepts a string.
+	-- Because of this, every save() will increment the Memory Leak counter at the end of the OBS log.
 	if event == REPLAY_EVENT then
 		latest_file_path = obslua.obs_frontend_get_last_replay()
 	elseif event == RECORDING_EVENT then
